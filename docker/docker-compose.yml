@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    container_name: memo-db
+    environment:
+      POSTGRES_USER: memo_user
+      POSTGRES_PASSWORD: memo_password
+      POSTGRES_DB: memo_app
+    volumes:
+      - ./db/init:/docker-entrypoint-initdb.d
+    ports:
+      - '5432:5432'
+
