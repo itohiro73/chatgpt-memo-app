@@ -1,5 +1,6 @@
 const express = require('express');
 const { Pool } = require('pg');
+const cors = require('cors');
 const app = express();
 
 const pool = new Pool({
@@ -10,6 +11,7 @@ const pool = new Pool({
   database: 'memo_app',
 });
 
+app.use(cors());
 app.use(express.json());
 
 // Get all memos
