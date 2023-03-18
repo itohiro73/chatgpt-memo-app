@@ -1,57 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import api from './api';
+import './App.css';
 
 function App() {
   const [memos, setMemos] = useState([]);
-  const [newMemoTitle, setNewMemoTitle] = useState('');
-  const [newMemoContent, setNewMemoContent] = useState('');
+  const [selectedMemo, setSelectedMemo] = useState(null);
 
   useEffect(() => {
-    fetchMemos();
+    fetch('http://localhost:3000/memos')
+      .then((response) => response.json())
+      .then((data) => setMemos(data));
   }, []);
 
-  const fetchMemos = async () => {
-    const response = await api.get('/memos');
-    setMemos(response.data);
+  const handleClickMemo = (memo) => {
+    setSelectedMemo(memo);
   };
 
-  const addMemo = async () => {
-    const response = await api.post('/memos', {
-      title: newMemoTitle,
-      content: newMemoContent,
-    });
-
-    setMemos([...memos, response.data]);
-    setNewMemoTitle('');
-    setNewMemoContent('');
+  const handleBackToList = () => {
+    setSelectedMemo(null);
   };
 
-  return (
-    <div>
-      <h1>Memo App</h1>
-      <input
-        type="text"
-        placeholder="Memo title"
-        value={newMemoTitle}
-        onChange={(e) => setNewMemoTitle(e.target.value)}
-      />
-      <textarea
-        placeholder="Memo content"
-        value={newMemoContent}
-        onChange={(e) => setNewMemoContent(e.target.value)}
-      />
-      <button onClick={addMemo}>Add Memo</button>
-      <ul>
-        {memos.map((memo) => (
-          <li key={memo.id}>
-            <h2>{memo.title}</h2>
-            <p>{memo.content}</p>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
+  if (selectedMemo) {
+    return (
+      <div className="container">
+        <a href="#" onClick={handleBackToList} className="back-to-list">
+          Back to list
+        </a>
+        <div className="memo">
+          <h2>{selectedMemo.title}</h2>
+          <p>{selectedMemo.content}</p>
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div className="container">
+        <h1>Memo List</h1>
+        <ul className="memo-list">
+          {memos.map((memo) => (
+            <li
+              key={memo.id}
+              className="memo-item"
+              onClick={() => handleClickMemo(memo)}
+            >
+              {memo.title}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
 }
 
 export default App;
-
